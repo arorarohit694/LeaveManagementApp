@@ -64,10 +64,6 @@ export default class LeaveRequests extends LightningElement {
     successHandler(event){
         this.showModalPopup=false;
         this.showToast('Data saved successfully');
-        this.refreshGrid();
-    }
-    @api
-    refreshGrid(){
         refreshApex(this.leaveRequestsWireResult);
     }
     showToast(message,title='success',variant='success'){
