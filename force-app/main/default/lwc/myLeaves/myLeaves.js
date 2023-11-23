@@ -1,6 +1,6 @@
 import { LightningElement, wire } from 'lwc';
 import getMyLeaves from '@salesforce/apex/LeaveRequstController.getMyLeaves';
-import {showToastEvent} from 'lightning/platformShowToastEvent';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import Id from '@salesforce/user/Id';
 import {refreshApex} from '@salesforce/apex';
 const COLUMNS =[
@@ -57,7 +57,12 @@ export default class MyLeaves extends LightningElement {
     }
     successHandler(event){
         this.showModalPopup=false;
-        this.showToast('Data saved successfully');
+        const evt = ShowToastEvent({
+            title :'SUCCESS',
+            message :'Data saved successfully',
+            variant :'success'
+        });
+        this.dispatchEvent(evt);
         refreshApex(this.MyLeavesWireResult);
 
         const refreshEvent = new CustomEvent('refreshleaverequests');
@@ -68,21 +73,23 @@ export default class MyLeaves extends LightningElement {
         const fields= { ...event.detail.fields };
         fields.Status__c ='Pending';
         if(new Date(fields.From_Date__c) > new Date(fields.To_Date__c)){
-            this.showToast('From Date should not be greater than To Date','Error','error');
+            const evt = ShowToastEvent({
+                title :'ERROR',
+                message :'To Date should be greater than from date',
+                variant :'error'
+            });
+            this.dispatchEvent(evt);
         }
         else if(new Date()>new Date(fields.From_Date__c)){
-            this.showToast('From Date should be greater than Today Date','Error','error');
-        }
+            const evt = ShowToastEvent({
+                title :'ERROR',
+                message :'From date should be greater than today date',
+                variant :'error'
+            });
+            this.dispatchEvent(evt);        }
         else{
             this.refs.leaveRequestsFrom.submit(fields);
         }
     }
-    showToast(message,title='success',variant='success'){
-        const event = new showToastEvent({
-            title,
-            message,
-            variant
-        });
-        this.dispatchEvent(event);
-    }
+
 }

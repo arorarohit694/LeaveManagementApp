@@ -1,6 +1,6 @@
 import { LightningElement, api, wire } from 'lwc';
 import getLeaveRequests from '@salesforce/apex/LeaveRequstController.getLeaveRequests';
-import {showToastEvent} from 'lightning/platformShowToastEvent';
+import {ShowToastEvent} from 'lightning/platformShowToastEvent';
 import Id from '@salesforce/user/Id';
 import {refreshApex} from '@salesforce/apex';
 const COLUMNS =[
@@ -63,7 +63,12 @@ export default class LeaveRequests extends LightningElement {
     }
     successHandler(event){
         this.showModalPopup=false;
-        this.showToast('Data saved successfully');
+        const evt = ShowToastEvent({
+            title :'SUCCESS',
+            message :'Data saved successfully',
+            variant :'success'
+        });
+        this.dispatchEvent(evt);
         refreshGrid();
     }
     @api
@@ -71,12 +76,5 @@ export default class LeaveRequests extends LightningElement {
         refreshApex('this.leaveRequestsWireResult');
     }
 
-    showToast(message,title='success',variant='success'){
-        const event = new showToastEvent({
-            title,
-            message,
-            variant
-        });
-        this.dispatchEvent(event);
-    }
+   
 }
